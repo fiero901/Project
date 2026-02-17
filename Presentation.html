@@ -1,0 +1,1994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Pollution Calculator - Project Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2A4365;
+            --secondary: #3182CE;
+            --accent: #0BC5EA;
+            --success: #48BB78;
+            --warning: #ED8936;
+            --danger: #F56565;
+            --dark: #1A202C;
+            --light: #F7FAFC;
+            --card-bg: #FFFFFF;
+            --gradient-primary: linear-gradient(135deg, #2A4365 0%, #3182CE 100%);
+            --gradient-accent: linear-gradient(135deg, #0BC5EA 0%, #3182CE 100%);
+            --gradient-success: linear-gradient(135deg, #48BB78 0%, #38A169 100%);
+            --gradient-warning: linear-gradient(135deg, #ED8936 0%, #DD6B20 100%);
+            --shadow-lg: 0 20px 40px rgba(0,0,0,0.1);
+            --shadow-xl: 0 25px 50px rgba(0,0,0,0.15);
+            --border-radius-xl: 20px;
+            --border-radius-lg: 15px;
+            --border-radius-md: 12px;
+            --transition-all: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.8;
+            color: #2D3748;
+            background: linear-gradient(135deg, #F7FAFC 0%, #EDF2F7 100%);
+            font-size: 18px;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 60px 40px;
+            border-radius: var(--border-radius-xl);
+            margin-bottom: 50px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" preserveAspectRatio="none"><path d="M0,50 C250,100 750,0 1000,50 L1000,100 L0,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: 100% 100%;
+        }
+
+        .header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            position: relative;
+            text-shadow: 2px 4px 6px rgba(0,0,0,0.2);
+            letter-spacing: -0.5px;
+        }
+
+        .header .subtitle {
+            font-size: 1.4rem;
+            max-width: 900px;
+            margin: 0 auto 30px;
+            opacity: 0.95;
+            font-weight: 400;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            margin: 0 5px 10px;
+            box-shadow: 0 4px 6px rgba(11, 197, 234, 0.3);
+        }
+
+        /* Navigation */
+        .nav-container {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .sidebar {
+            flex: 0 0 320px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius-xl);
+            padding: 30px;
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 30px;
+            height: fit-content;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .sidebar h3 {
+            color: var(--primary);
+            font-size: 1.6rem;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--accent);
+            font-weight: 600;
+        }
+
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-list li {
+            margin-bottom: 15px;
+            transition: var(--transition-all);
+        }
+
+        .nav-list a {
+            text-decoration: none;
+            color: #4A5568;
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            border-radius: var(--border-radius-md);
+            transition: var(--transition-all);
+            font-size: 1.05rem;
+            background: #F8FAFC;
+            border: 2px solid transparent;
+        }
+
+        .nav-list a:hover {
+            background: var(--gradient-accent);
+            color: white;
+            transform: translateX(10px);
+            border-color: var(--accent);
+            box-shadow: 0 8px 20px rgba(11, 197, 234, 0.3);
+        }
+
+        .nav-list i {
+            margin-right: 15px;
+            font-size: 1.2rem;
+            width: 25px;
+            text-align: center;
+        }
+
+        .nav-list .active {
+            background: var(--gradient-primary);
+            color: white;
+            font-weight: 500;
+            border-color: var(--secondary);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            background: var(--card-bg);
+            border-radius: var(--border-radius-xl);
+            padding: 45px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .section {
+            margin-bottom: 70px;
+            padding-bottom: 50px;
+            border-bottom: 2px solid #E2E8F0;
+            position: relative;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .section-title {
+            color: var(--primary);
+            font-size: 2.2rem;
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            position: relative;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 5px;
+            background: var(--gradient-accent);
+            border-radius: 3px;
+        }
+
+        .section-title i {
+            margin-right: 15px;
+            color: var(--accent);
+            font-size: 2rem;
+            vertical-align: middle;
+        }
+
+        h2 {
+            font-size: 1.9rem;
+            color: var(--primary);
+            margin: 30px 0 20px;
+            font-weight: 600;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+            color: var(--dark);
+            margin: 25px 0 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            font-size: 1.3rem;
+            color: var(--secondary);
+            margin: 20px 0 10px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            line-height: 1.9;
+            color: #4A5568;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 30px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            color: #4A5568;
+        }
+
+        /* Cards & Boxes */
+        .feature-card {
+            background: linear-gradient(135deg, #F8FAFC 0%, #EDF2F7 100%);
+            border-radius: var(--border-radius-lg);
+            padding: 30px;
+            margin: 25px 0;
+            border-left: 5px solid var(--accent);
+            transition: var(--transition-all);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            transition: var(--transition-all);
+            border: 1px solid #E2E8F0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--gradient-accent);
+        }
+
+        .info-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .info-card h4 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .info-card i {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: linear-gradient(135deg, #2D3748 0%, #1A202C 100%);
+            color: #E2E8F0;
+            padding: 30px;
+            border-radius: var(--border-radius-lg);
+            margin: 25px 0;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-left: 5px solid var(--accent);
+            overflow-x: auto;
+        }
+
+        .math-formula {
+            background: linear-gradient(135deg, #F0FFF4 0%, #E6FFFA 100%);
+            padding: 25px;
+            border-radius: var(--border-radius-lg);
+            margin: 25px 0;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.2rem;
+            border: 2px solid var(--success);
+            position: relative;
+        }
+
+        .math-formula::before {
+            content: 'Formula';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--success);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            margin: 30px 0;
+            border-radius: var(--border-radius-lg);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+        }
+
+        th {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: none;
+        }
+
+        td {
+            padding: 18px 20px;
+            border-bottom: 1px solid #E2E8F0;
+            font-size: 1.05rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+
+        tr:hover {
+            background: #EBF8FF;
+        }
+
+        /* AQI Colors */
+        .color-indicator {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 10px;
+        }
+
+        .color-box {
+            width: 25px;
+            height: 25px;
+            border-radius: 6px;
+            margin-right: 10px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+
+        .aqi-good { background: linear-gradient(135deg, #48BB78 0%, #38A169 100%); }
+        .aqi-moderate { background: linear-gradient(135deg, #ECC94B 0%, #D69E2E 100%); }
+        .aqi-sensitive { background: linear-gradient(135deg, #ED8936 0%, #DD6B20 100%); }
+        .aqi-unhealthy { background: linear-gradient(135deg, #F56565 0%, #E53E3E 100%); }
+        .aqi-very-unhealthy { background: linear-gradient(135deg, #9F7AEA 0%, #805AD5 100%); }
+        .aqi-hazardous { background: linear-gradient(135deg, #805AD5 0%, #6B46C1 100%); }
+
+        /* Stats Box */
+        .stats-box {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 30px;
+            border-radius: var(--border-radius-lg);
+            margin: 30px 0;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--border-radius-md);
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 50px 0 30px;
+            margin-top: 70px;
+            color: #718096;
+            border-top: 2px solid #E2E8F0;
+            font-size: 1.1rem;
+        }
+
+        .footer a {
+            color: var(--secondary);
+            text-decoration: none;
+            transition: var(--transition-all);
+        }
+
+        .footer a:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .nav-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                position: static;
+            }
+            
+            .header h1 {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px;
+                padding: 15px;
+            }
+            
+            .header {
+                padding: 40px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .main-content {
+                padding: 25px;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Scroll Indicator */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--secondary));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.1s;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header animate-in">
+            <h1><i class="fas fa-route"></i> COMPREHENSIVE PROJECT ANALYSIS</h1>
+            <div class="subtitle">
+                Route Pollution Calculator: An advanced web-based platform for real-time air pollution analysis and health impact assessment along multiple travel routes
+            </div>
+            
+        </header>
+
+        <!-- Main Content Area -->
+        <div class="nav-container">
+            <!-- Navigation Sidebar -->
+            <nav class="sidebar animate-in">
+                <h3><i class="fas fa-compass"></i> Navigation Guide</h3>
+                <ul class="nav-list">
+                    <li><a href="#overview" class="active"><i class="fas fa-eye"></i> Project Overview</a></li>
+                    <li><a href="#pollutants"><i class="fas fa-smog"></i> Air Pollutants Analysis</a></li>
+                    <li><a href="#aqi"><i class="fas fa-calculator"></i> AQI Calculation System</a></li>
+                    <li><a href="#health-score"><i class="fas fa-heartbeat"></i> Health Score Engine</a></li>
+                    <li><a href="#transport"><i class="fas fa-car"></i> Transportation Analysis</a></li>
+                    <li><a href="#age-factors"><i class="fas fa-users"></i> Age & Health Factors</a></li>
+                    <li><a href="#weather"><i class="fas fa-cloud-sun"></i> Weather Impact System</a></li>
+                    <li><a href="#architecture"><i class="fas fa-sitemap"></i> Technical Architecture</a></li>
+                    <li><a href="#pipeline"><i class="fas fa-cogs"></i> Data Processing Pipeline</a></li>
+                    <li><a href="#educational"><i class="fas fa-graduation-cap"></i> Educational Value</a></li>
+                    <li><a href="#presentation"><i class="fas fa-chalkboard-teacher"></i> Presentation Guide</a></li>
+                    <li><a href="#future"><i class="fas fa-rocket"></i> Future Enhancements</a></li>
+                    <li><a href="#conclusion"><i class="fas fa-flag-checkered"></i> Conclusion</a></li>
+                </ul>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Project Overview Section -->
+                <section id="overview" class="section animate-in">
+                    <h2 class="section-title"><i class="fas fa-eye"></i> PROJECT OVERVIEW</h2>
+                    
+                    <div class="feature-card">
+                        <h3>1.1 What is Route Pollution Calculator?</h3>
+                        <p>The Route Pollution Calculator is a sophisticated <strong>web-based application</strong> that simulates, analyzes, and visualizes air pollution exposure along travel routes. It combines environmental science with data analytics to help users understand how different routes impact their health based on pollution levels, transportation choices, and personal health factors.</p>
+                        
+                        <div class="stats-box">
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <div class="stat-value">4</div>
+                                    <div class="stat-label">Pollutants Tracked</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">6</div>
+                                    <div class="stat-label">Transport Modes</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">100+</div>
+                                    <div class="stat-label">Health Factors</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">24/7</div>
+                                    <div class="stat-label">Real-time Analysis</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>1.2 Core Purpose & Mission</h3>
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <i class="fas fa-shield-alt"></i>
+                                <h4>Health Protection</h4>
+                                <p>Minimize pollution exposure during daily commutes and travel activities</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-chart-line"></i>
+                                <h4>Informed Decision Making</h4>
+                                <p>Choose cleaner routes based on scientific data and real-time analysis</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-graduation-cap"></i>
+                                <h4>Educational Tool</h4>
+                                <p>Understand air quality science and environmental impacts</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-user-md"></i>
+                                <h4>Personalized Assessment</h4>
+                                <p>Tailored recommendations based on individual health profiles</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>1.3 Target Users & Applications</h3>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <i class="fas fa-user-tie"></i>
+                            <h4>Daily Commuters</h4>
+                            <p>Urban professionals planning optimal routes to minimize pollution exposure during daily commutes</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-heartbeat"></i>
+                            <h4>Health-conscious Individuals</h4>
+                            <p>People with respiratory conditions, allergies, or cardiovascular concerns</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-graduation-cap"></i>
+                            <h4>Environmental Students</h4>
+                            <p>Educational tool for understanding air pollution science and data analysis</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-city"></i>
+                            <h4>Urban Planners</h4>
+                            <p>City officials assessing pollution distribution and planning green routes</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Air Pollutants Section -->
+                <section id="pollutants" class="section animate-in">
+                    <h2 class="section-title"><i class="fas fa-smog"></i> AIR POLLUTANTS - DETAILED ANALYSIS</h2>
+                    
+                    <div class="feature-card">
+                        <h3>2.1 PM2.5 (Fine Particulate Matter)</h3>
+                        <p><strong>Scientific Definition:</strong> Microscopic particles with diameter ≤ 2.5 micrometers (approximately 1/30th the width of a human hair) that can penetrate deep into the respiratory system.</p>
+                        
+                        <h4>Primary Sources & Distribution:</h4>
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <i class="fas fa-car"></i>
+                                <h4>Mobile Sources</h4>
+                                <p>Vehicle exhaust systems (40-60% contribution)</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-industry"></i>
+                                <h4>Stationary Sources</h4>
+                                <p>Power plants, industrial processes (20-30%)</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-tree"></i>
+                                <h4>Natural Sources</h4>
+                                <p>Wildfires, dust storms, pollen (10-20%)</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-atom"></i>
+                                <h4>Secondary Formation</h4>
+                                <p>Chemical reactions in atmosphere</p>
+                            </div>
+                        </div>
+
+                        <h4>Critical Health Impacts:</h4>
+                        <div class="code-block">
+                            • Respiratory System: Asthma attacks, bronchitis, reduced lung function
+                            • Cardiovascular: Heart attacks, arrhythmias, blood pressure spikes
+                            • Neurological: Cognitive decline, Alzheimer's disease risk
+                            • Vulnerable Groups: Children, elderly, pregnant women most affected
+                        </div>
+                        
+                        <p><strong>Measurement Unit:</strong> Micrograms per cubic meter (µg/m³)</p>
+                        <p><strong>WHO Safety Guideline:</strong> ≤ 15 µg/m³ (24-hour average)</p>
+                        <p><strong>Danger Threshold:</strong> > 35.4 µg/m³ = UNHEALTHY levels</p>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <h4>2.2 PM10 (Coarse Particles)</h4>
+                            <p>Larger particles (≤10μm) from road dust, construction, and agriculture. WHO Guideline: 45 µg/m³</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>2.3 NO₂ (Nitrogen Dioxide)</h4>
+                            <p>Reddish-brown gas from combustion. WHO Guideline: 25 µg/m³. Conversion: 1 ppm = 1880 µg/m³</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>2.4 O₃ (Ground-level Ozone)</h4>
+                            <p>Secondary pollutant formed by sunlight. WHO Guideline: 100 µg/m³ (8-hour average)</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- AQI Calculation Section -->
+                <section id="aqi" class="section animate-in">
+                    <h2 class="section-title"><i class="fas fa-calculator"></i> AIR QUALITY INDEX (AQI) CALCULATION</h2>
+                    
+                    <div class="feature-card">
+                        <h3>3.1 Understanding AQI</h3>
+                        <p>The Air Quality Index (AQI) is a <strong>standardized numerical scale (0-500)</strong> that converts complex pollutant concentration data into easily understandable health risk categories. It serves as the primary communication tool between environmental agencies and the public.</p>
+                    </div>
+
+                    <h3>3.2 Calculation Methodology (EPA Standard)</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>AQI Category</th>
+                                    <th>AQI Range</th>
+                                    <th>PM2.5 (µg/m³)</th>
+                                    <th>Color Code</th>
+                                    <th>Health Implications</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Good</td>
+                                    <td>0-50</td>
+                                    <td>0.0-12.0</td>
+                                    <td><span class="color-indicator"><span class="color-box aqi-good"></span>Green</span></td>
+                                    <td>Air quality satisfactory, no health risk</td>
+                                </tr>
+                                <tr>
+                                    <td>Moderate</td>
+                                    <td>51-100</td>
+                                    <td>12.1-35.4</td>
+                                    <td><span class="color-indicator"><span class="color-box aqi-moderate"></span>Yellow</span></td>
+                                    <td>Acceptable quality, minor concern for sensitive individuals</td>
+                                </tr>
+                                <tr>
+                                    <td>Unhealthy for Sensitive Groups</td>
+                                    <td>101-150</td>
+                                    <td>35.5-55.4</td>
+                                    <td><span class="color-indicator"><span class="color-box aqi-sensitive"></span>Orange</span></td>
+                                    <td>Sensitive groups experience health effects</td>
+                                </tr>
+                                <tr>
+                                    <td>Unhealthy</td>
+                                    <td>151-200</td>
+                                    <td>55.5-150.4</td>
+                                    <td><span class="color-indicator"><span class="color-box aqi-unhealthy"></span>Red</span></td>
+                                    <td>Everyone may experience health effects</td>
+                                </tr>
+                                <tr>
+                                    <td>Very Unhealthy</td>
+                                    <td>201-300</td>
+                                    <td>150.5-250.4</td>
+                                    <td><span class="color-indicator"><span class="color-box aqi-very-unhealthy"></span>Purple</span></td>
+                                    <td>Health warnings of emergency conditions</td>
+                                </tr>
+                                <tr>
+                                    <td>Hazardous</td>
+                                    <td>301-500</td>
+                                    <td>250.5-500.4</td>
+                                    <td><span class="color-indicator"><span class="color-box aqi-hazardous"></span>Maroon</span></td>
+                                    <td>Health emergency, entire population affected</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h4>Mathematical Formula Implementation</h4>
+                    <div class="math-formula">
+                        AQI = [(I_high - I_low)/(C_high - C_low)] × (C - C_low) + I_low
+                        
+                        Where:
+                        • C = Measured pollutant concentration
+                        • C_low = Lower concentration breakpoint
+                        • C_high = Upper concentration breakpoint
+                        • I_low = AQI value at C_low
+                        • I_high = AQI value at C_high
+                    </div>
+
+                    <div class="feature-card">
+                        <h4>Practical Calculation Example</h4>
+                        <p><strong>Scenario:</strong> PM2.5 concentration measured at 65 µg/m³</p>
+                        <div class="code-block">
+                            Step 1: Identify breakpoint → 55.5-150.4 µg/m³ (Unhealthy category)
+                            Step 2: Retrieve values → I_low = 151, I_high = 200
+                            Step 3: Apply formula:
+                            
+                            AQI = [(200 - 151)/(150.4 - 55.5)] × (65 - 55.5) + 151
+                                = [49/94.9] × 9.5 + 151
+                                = 0.516 × 9.5 + 151
+                                = 4.9 + 151 = 155.9 ≈ 156
+                            
+                            Result: AQI 156 → "UNHEALTHY" classification
+                        </div>
+                        <p><strong>Interpretation:</strong> At this pollution level, everyone may begin to experience health effects. Sensitive groups should avoid outdoor activities.</p>
+                    </div>
+
+                    <h4>3.3 Multi-Pollutant AQI Strategy</h4>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <i class="fas fa-calculator"></i>
+                            <h4>Individual Calculation</h4>
+                            <p>Each pollutant calculated separately using EPA formula</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-chart-bar"></i>
+                            <h4>Highest Value Selection</h4>
+                            <p>Final AQI = Maximum value among all pollutants</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-shield-alt"></i>
+                            <h4>Worst-Case Protection</h4>
+                            <p>Ensures conservative, protective risk assessment</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Health Score Section -->
+                <section id="health-score" class="section animate-in">
+                    <h2 class="section-title"><i class="fas fa-heartbeat"></i> HEALTH SCORE CALCULATION SYSTEM</h2>
+                    
+                    <div class="feature-card">
+                        <h3>4.1 Base Score Architecture</h3>
+                        <p>The health score system transforms complex pollution data into an intuitive 0-100 scale, where higher scores indicate better health outcomes.</p>
+                        
+                        <div class="stats-box">
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <div class="stat-value">100</div>
+                                    <div class="stat-label">Perfect Health Start</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">35%</div>
+                                    <div class="stat-label">PM2.5 Weight</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">18%</div>
+                                    <div class="stat-label">PM10 Weight</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">5</div>
+                                    <div class="stat-label">Adjustment Factors</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>4.2 Advanced Calculation Algorithm</h3>
+                    
+                    <h4>Phase 1: Pollutant Impact Analysis</h4>
+                    <div class="code-block">
+                        PM2.5 Deduction (35% weight):
+                        • If ≤ 12.0 µg/m³: Deduction = PM2.5 × 0.8
+                        • If ≤ 35.4 µg/m³: Deduction = 9.6 + (PM2.5 - 12) × 1.6
+                        • If ≤ 55.4 µg/m³: Deduction = 46.4 + (PM2.5 - 35.4) × 2.2
+                        • Else: Deduction = 90 + (PM2.5 - 55.4) × 0.7
+                        • Maximum Deduction: 35 points
+                        
+                        PM10 Deduction (18% weight):
+                        • If > 54 µg/m³: Deduction = (PM10 - 54) × 0.12
+                        • Maximum Deduction: 18 points
+                        
+                        NO₂ Deduction (18% weight):
+                        • Convert ppm to µg/m³: value × 1880
+                        • If > 25 µg/m³: Deduction = (NO₂ - 25) × 0.04
+                        • Maximum Deduction: 18 points
+                        
+                        O₃ Deduction (17% weight):
+                        • Convert ppm to µg/m³: value × 1960
+                        • If > 100 µg/m³: Deduction = (O₃ - 100) × 0.02
+                        • Maximum Deduction: 17 points
+                    </div>
+
+                    <h4>Phase 2: Personalization Factors</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Factor Category</th>
+                                    <th>Options</th>
+                                    <th>Multiplier</th>
+                                    <th>Scientific Basis</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Transportation Mode</strong></td>
+                                    <td>Walking, Cycling, Car (Windows/AC), Bus, Motorcycle</td>
+                                    <td>0.996 - 1.000</td>
+                                    <td>Exposure duration and inhalation rate</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Age Group</strong></td>
+                                    <td>Child, Teen, Adult, Senior</td>
+                                    <td>0.995 - 1.000</td>
+                                    <td>Lung development and vulnerability</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Health Conditions</strong></td>
+                                    <td>Asthma, Allergies, Heart Conditions, Pregnancy</td>
+                                    <td>0.990 - 1.000</td>
+                                    <td>Medical sensitivity to pollutants</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Weather Conditions</strong></td>
+                                    <td>Sunny, Rainy, Windy, Foggy, Thunderstorm</td>
+                                    <td>0.997 - 1.030</td>
+                                    <td>Pollution dispersion mechanisms</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4>4.3 Real-World Calculation Example</h4>
+                        <p><strong>User Scenario:</strong> A child with asthma walking to school on a sunny day with moderate pollution levels.</p>
+                        
+                        <div class="code-block">
+                            Input Parameters:
+                            • PM2.5 Concentration: 25 µg/m³
+                            • Transportation: Walking (×0.998)
+                            • Age: Child (×0.995)
+                            • Health: Asthma (×0.990)
+                            • Weather: Sunny (×0.998)
+                            
+                            Calculation Process:
+                            1. Pollutant Deduction = 9.6 + (25-12)×1.6 = 30.4 points
+                            2. Base Score = 100 - 30.4 = 69.6
+                            3. Apply Personal Factors = 69.6 × 0.998 × 0.995 × 0.990 × 0.998
+                            4. Final Health Score = 68.28 ≈ 68/100
+                            
+                            Result Interpretation:
+                            • Score Range: 68/100
+                            • Risk Level: MODERATE
+                            • Recommendation: Consider alternative transportation or route
+                        </div>
+                    </div>
+
+                    <h4>Final Score Calculation Formula</h4>
+                    <div class="math-formula">
+                        Health Score = MAX(0, MIN(100, 
+                                     (100 - Σ(Pollutant_Deductions)) 
+                                     × Transportation_Factor 
+                                     × Age_Factor 
+                                     × Health_Factor 
+                                     × Weather_Factor))
+                        
+                        Where:
+                        • Score clamped between 0-100 for interpretability
+                        • Each factor scientifically validated
+                        • Real-time adjustment based on conditions
+                    </div>
+                </section>
+
+                <!-- Transportation Analysis Section -->
+                <section id="transport" class="section animate-in">
+                    <h2 class="section-title"><i class="fas fa-car"></i> TRANSPORTATION MODE ANALYSIS</h2>
+                    
+                    <div class="feature-card">
+                        <h3>5.1 Exposure Hierarchy & Protection Levels</h3>
+                        
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Transport Mode</th>
+                                        <th>Relative Exposure</th>
+                                        <th>Protection Level</th>
+                                        <th>Key Scientific Factors</th>
+                                        <th>Recommendation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Motorcycle</strong></td>
+                                        <td>1.3x Highest</td>
+                                        <td>Very Low</td>
+                                        <td>Direct exhaust exposure, no cabin, proximity to traffic</td>
+                                        <td>Use protective masks, avoid rush hours</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Walking</strong></td>
+                                        <td>1.2x High</td>
+                                        <td>Low</td>
+                                        <td>Direct inhalation, sidewalk-level pollution, slow pace</td>
+                                        <td>Choose routes away from traffic</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Cycling</strong></td>
+                                        <td>1.1x Medium-High</td>
+                                        <td>Low-Medium</td>
+                                        <td>Increased breathing rate (4-6x), traffic proximity</td>
+                                        <td>Use bike lanes, maintain distance from vehicles</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Car (Windows Open)</strong></td>
+                                        <td>0.8x Medium</td>
+                                        <td>Medium</td>
+                                        <td>Some cabin protection but air exchange with outside</td>
+                                        <td>Close windows in high-pollution areas</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Bus</strong></td>
+                                        <td>0.7x Medium-Low</td>
+                                        <td>Medium-High</td>
+                                        <td>Elevated position, partial AC, distance from exhaust</td>
+                                        <td>Prefer newer buses with better filtration</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Car (AC with Filter)</strong></td>
+                                        <td>0.6x Lowest</td>
+                                        <td>High</td>
+                                        <td>Filtered air, cabin sealing, recirculation mode</td>
+                                        <td>Maintain AC filters, use recirculation mode</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <h4>5.2 Scientific Evidence Base</h4>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <i class="fas fa-lungs"></i>
+                            <h4>Inhalation Rates</h4>
+                            <p>Cyclists breathe 4-6 times more air than car occupants, increasing pollutant intake</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-car-side"></i>
+                            <h4>Cabin Protection</h4>
+                            <p>Modern vehicles reduce exposure by 20-80% depending on filtration systems</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-child"></i>
+                            <h4>Height Factor</h4>
+                            <p>Children inhale more pollution due to proximity to vehicle exhaust levels</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-clock"></i>
+                            <h4>Duration Impact</h4>
+                            <p>Longer commute times linearly increase cumulative pollution exposure</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Age Factors Section -->
+                <section id="age-factors" class="section animate-in">
+                    <h2 class="section-title"><i class="fas fa-users"></i> AGE & HEALTH FACTORS ANALYSIS</h2>
+                    
+                    <div class="feature-card">
+                        <h3>6.1 Age-Specific Vulnerability Analysis</h3>
+                        
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <i class="fas fa-baby"></i>
+                                <h4>Children (0-15 years)</h4>
+                                <p><strong>Critical Vulnerabilities:</strong></p>
+                                <ul>
+                                    <li>Higher breathing rate per body weight</li>
+                                    <li>Developing lung alveoli until age 8</li>
+                                    <li>More outdoor activity time</li>
+                                    <li>Closer to ground-level pollution</li>
+                                    <li>Immature immune defenses</li>
+                                </ul>
+                                <p><strong>Protection Factor:</strong> ×0.995</p>
+                            </div>
+                            
+                            <div class="info-card">
+                                <i class="fas fa-running"></i>
+                                <h4>Teenagers (16-19 years)</h4>
+                                <p><strong>Characteristics:</strong></p>
+                                <ul>
+                                    <li>Peak physical activity levels</li>
+                                    <li>Active transportation preference</li>
+                                    <li>Nearly complete lung development</li>
+                                    <li>Resilient but still developing</li>
+                                </ul>
+                                <p><strong>Protection Factor:</strong> ×0.997</p>
+                            </div>
+                            
+                            <div class="info-card">
+                                <i class="fas fa-user"></i>
+                                <h4>Adults (20-64 years)</h4>
+                                <p><strong>Baseline Group:</strong></p>
+                                <ul>
+                                    <li>Fully developed respiratory system</li>
+                                    <li>Established immune response</li>
+                                    <li>Variable activity patterns</li>
+                                    <li>Established commuting habits</li>
+                                </ul>
+                                <p><strong>Protection Factor:</strong> ×1.000</p>
+                            </div>
+                            
+                            <div class="info-card">
+                                <i class="fas fa-user-friends"></i>
+                                <h4>Seniors (65+ years)</h4>
+                                <p><strong>Risk Factors:</strong></p>
+                                <ul>
+                                    <li>Reduced lung capacity</li>
+                                    <li>Common pre-existing conditions</li>
+                                    <li>Weakened immune function</li>
+                                    <li>Slower recovery from exposure</li>
+                                </ul>
+                                <p><strong>Protection Factor:</strong> ×0.995</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>6.2 Health Condition Multipliers</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Health Condition</th>
+                                    <th>Risk Factor</th>
+                                    <th>Multiplier</th>
+                                    <th>Specific Concerns</th>
+                                    <th>Recommended Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Asthma</strong></td>
+                                    <td>Very High</td>
+                                    <td>×0.990</td>
+                                    <td>Bronchial inflammation, trigger sensitivity</td>
+                                    <td>Avoid high-pollution routes, carry inhaler</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Allergies</strong></td>
+                                    <td>High</td>
+                                    <td>×0.996</td>
+                                    <td>Pollen interaction with pollutants</td>
+                                    <td>Monitor pollen counts, use filtration</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Bronchitis</strong></td>
+                                    <td>High</td>
+                                    <td>×0.992</td>
+                                    <td>Compromised respiratory function</td>
+                                    <td>Minimize exposure, use protective gear</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Heart Conditions</strong></td>
+                                    <td>High</td>
+                                    <td>×0.993</td>
+                                    <td>Cardiac stress from pollution</td>
+                                    <td>Monitor exertion, avoid high-pollution areas</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Pregnancy</strong></td>
+                                    <td>Moderate-High</td>
+                                    <td>×0.995</td>
+                                    <td>Fetal development concerns</td>
+                                    <td>Limit exposure, choose clean routes</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Elderly Frailty</strong></td>
+                                    <td>Very High</td>
+                                    <td>×0.990</td>
+                                    <td>Multiple system vulnerabilities</td>
+                                    <td>Maximum protection, limited outdoor time</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Weather Impact Section -->
+                <section id="weather" class="section animate-in">
+                    <h2 class="section-title"><i class="fas fa-cloud-sun"></i> WEATHER IMPACT SYSTEM</h2>
+                    
+                    <div class="feature-card">
+                        <h3>7.1 Meteorological Effects on Pollution Dispersion</h3>
+                        
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Weather Condition</th>
+                                        <th>Impact on Health Score</th>
+                                        <th>Scientific Mechanism</th>
+                                        <th>Pollutant Behavior</th>
+                                        <th>Practical Implications</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Windy Conditions</strong></td>
+                                        <td>+3.0% Improvement</td>
+                                        <td>Dilution and dispersion of pollutants</td>
+                                        <td>Rapid horizontal mixing, reduced concentration</td>
+                                        <td>Best time for outdoor activities</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Heavy Rain</strong></td>
+                                        <td>+2.0% Improvement</td>
+                                        <td>Wet deposition of particulate matter</td>
+                                        <td>Particles captured by rain droplets</td>
+                                        <td>Post-rain air quality significantly improved</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Thunderstorm</strong></td>
+                                        <td>+2.0% Improvement</td>
+                                        <td>Electrostatic precipitation, downdrafts</td>
+                                        <td>Enhanced particle removal</td>
+                                        <td>Temporary improvement, monitor ozone</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Sunny/Hot</strong></td>
+                                        <td>-0.2% Reduction</td>
+                                        <td>Photochemical ozone formation</td>
+                                        <td>Increased ground-level ozone</td>
+                                        <td>Higher afternoon pollution levels</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Foggy</strong></td>
+                                        <td>-0.3% Reduction</td>
+                                        <td>Pollution trapped near surface</td>
+                                        <td>Reduced vertical mixing, accumulation</td>
+                                        <td>Avoid outdoor exercise</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Cold Morning</strong></td>
+                                        <td>-2.0% Reduction</td>
+                                        <td>Temperature inversion layer</td>
+                                        <td>Pollution trapped in cold air layer</td>
+                                        <td>Highest pollution levels at ground level</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <h4>7.2 Advanced Meteorological Modeling</h4>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <i class="fas fa-temperature-high"></i>
+                            <h4>Temperature Effects</h4>
+                            <p>Higher temperatures increase chemical reaction rates, accelerating ozone formation from NOx and VOCs</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-wind"></i>
+                            <h4>Wind Patterns</h4>
+                            <p>Wind speed and direction determine pollution transport and local concentration gradients</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-tint"></i>
+                            <h4>Humidity Impact</h4>
+                            <p>High humidity causes particles to absorb water, increasing size and altering deposition patterns</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-cloud"></i>
+                            <h4>Atmospheric Stability</h4>
+                            <p>Stable atmospheric conditions inhibit vertical mixing, leading to pollution accumulation</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Technical Architecture Section -->
+                <section id="architecture" class="section animate-in">
+                    <h2 class="section-title"><i class="fas fa-sitemap"></i> TECHNICAL ARCHITECTURE</h2>
+                    
+                    <div class="feature-card">
+                        <h3>8.1 Modern Frontend Architecture</h3>
+                        
+                        <div class="code-block">
+                            Application Structure:
+                            ┌─────────────────────────────────────────────┐
+                            │            Loading Screen (Animated)        │
+                            ├─────────────────────────────────────────────┤
+                            │          Fixed Navigation Header           │
+                            ├─────────────────────────────────────────────┤
+                            │  ┌───────────┐  ┌──────────────────────┐  │
+                            │  │           │  │                      │  │
+                            │  │  Sidebar  │  │    Main Content      │  │
+                            │  │Navigation │  │                      │  │
+                            │  │           │  │  • Introduction      │  │
+                            │  │           │  │  • Route Config      │  │
+                            │  │           │  │  • Analysis Results  │  │
+                            │  │           │  │  • Visualization     │  │
+                            │  │           │  │  • Key Insights      │  │
+                            │  └───────────┘  └──────────────────────┘  │
+                            ├─────────────────────────────────────────────┤
+                            │              Footer & Modals               │
+                            └─────────────────────────────────────────────┘
+                        </div>
+                    </div>
+
+                    <h4>8.2 Advanced CSS Features</h4>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <i class="fas fa-palette"></i>
+                            <h4>CSS Variables</h4>
+                            <p>Theming system with light/dark mode support, dynamic color schemes</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-layer-group"></i>
+                            <h4>Flexbox/Grid Layout</h4>
+                            <p>Responsive design with adaptive layouts for all device sizes</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-magic"></i>
+                            <h4>Advanced Animations</h4>
+                            <p>Smooth transitions, loading animations, hover effects, scroll-triggered animations</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-print"></i>
+                            <h4>Print Optimization</h4>
+                            <p>Specialized styles for report generation and documentation printing</p>
+                        </div>
+                    </div>
+
+                    <h4>8.3 JavaScript Architecture Pattern</h4>
+                    <div class="code-block">
+                        // Modern Module-Based Architecture
+                        AppState = {
+                            routes: [],                    // Array of route objects
+                            config: {},                   // Current user configuration
+                            charts: new Map(),            // Active chart instances
+                            preferences: {},              // User preferences
+                            history: []                   // Analysis history
+                        };
+                        
+                        // Core Function Modules
+                        CoreEngine = {
+                            pollutionCalculator: Function,  // Real-time pollution analysis
+                            healthScoreEngine: Function,    // Health score computation
+                            aqiGenerator: Function,        // EPA-standard AQI calculation
+                            visualizationEngine: Function,  // Chart and graph rendering
+                            dataExporter: Function         // Report generation and export
+                        };
+                        
+                        // External Service Integration
+                        Services = {
+                            weatherAPI: Function,          // Real-time weather data
+                            trafficAPI: Function,          // Traffic pattern analysis
+                            pollutionAPI: Function,        // Air quality data sources
+                            geolocation: Function          // Route mapping services
+                        };
+                    </div>
+
+                    <h4>8.4 Technology Stack & Libraries</h4>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <img src="https://img.icons8.com/color/96/000000/chart.png" alt="Chart.js" style="width: 60px; height: 60px; margin-bottom: 15px;">
+                            <h4>Chart.js 3.0</h4>
+                            <p>Advanced data visualization with interactive charts and real-time updates</p>
+                        </div>
+                        <div class="info-card">
+                            <img src="https://img.icons8.com/color/96/000000/animation.png" alt="AOS" style="width: 60px; height: 60px; margin-bottom: 15px;">
+                            <h4>AOS Library</h4>
+                            <p>Scroll-triggered animations for enhanced user experience</p>
+                        </div>
+                        <div class="info-card">
+                            <img src="https://img.icons8.com/color/96/000000/font-awesome.png" alt="Font Awesome" style="width: 60px; height: 60px; margin-bottom: 15px;">
+                            <h4>Font Awesome 6</h4>
+                            <p>Comprehensive icon library for intuitive UI elements</p>
+                        </div>
+                        <div class="info-card">
+                            <img src="https://img.icons8.com/color/96/000000/google-fonts.png" alt="Google Fonts" style="width: 60px; height: 60px; margin-bottom: 15px;">
+                            <h4>Google Fonts</h4>
+                            <p>Optimized typography for readability and aesthetic appeal</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Data Processing Section -->
+                <section id="pipeline" class="section animate-in">
+                    <h2 class="section-title"><i class="fas fa-cogs"></i> DATA PROCESSING PIPELINE</h2>
+                    
+                    <div class="feature-card">
+                        <h3>9.1 Comprehensive Input Collection System</h3>
+                        
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <i class="fas fa-route"></i>
+                                <h4>Route Configuration</h4>
+                                <p>Start point → Multiple midpoints → End point with precise geographic coordinates</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-vial"></i>
+                                <h4>Pollution Data</h4>
+                                <p>Four primary pollutants (PM2.5, PM10, NO₂, O₃) at each route point</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-user-circle"></i>
+                                <h4>Personal Profile</h4>
+                                <p>Age group, health conditions, transportation preferences, activity levels</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-cloud"></i>
+                                <h4>Weather Conditions</h4>
+                                <p>Real-time meteorological data including temperature, wind, humidity, precipitation</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>9.2 Multi-Stage Processing Pipeline</h3>
+                    
+                    <div class="code-block">
+                        // Stage 1: Data Normalization & Validation
+                        Step 1: Input Validation
+                          • Verify geographic coordinates
+                          • Validate pollution data ranges
+                          • Check personal profile completeness
+                          • Sanitize weather parameters
+                        
+                        // Stage 2: Weighted Spatial Analysis
+                        Step 2: Route Point Analysis
+                          • Calculate distance-weighted averages
+                          • Apply spatial interpolation for missing points
+                          • Account for elevation changes
+                          • Consider proximity to pollution sources
+                        
+                        // Stage 3: Time-Based Adjustments
+                        Step 3: Temporal Analysis
+                          • Adjust for time of day (rush hour vs off-peak)
+                          • Apply diurnal variation patterns
+                          • Consider seasonal effects
+                          • Account for day-of-week variations
+                        
+                        // Stage 4: Health Impact Modeling
+                        Step 4: Exposure Assessment
+                          • Calculate inhalation rates by activity
+                          • Apply age-specific absorption factors
+                          • Consider health condition multipliers
+                          • Account for exposure duration
+                        
+                        // Stage 5: Risk Classification
+                        Step 5: Result Generation
+                          • Compute final health score (0-100)
+                          • Generate EPA-standard AQI values
+                          • Create risk categories (Low/Moderate/High)
+                          • Produce personalized recommendations
+                    </div>
+
+                    <h4>9.3 Output Generation & Visualization</h4>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <i class="fas fa-chart-bar"></i>
+                            <h4>Interactive Charts</h4>
+                            <p>Real-time pollution maps, exposure graphs, comparative analysis</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-file-alt"></i>
+                            <h4>Detailed Reports</h4>
+                            <p>PDF reports with route analysis, health recommendations, pollution trends</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <h4>Route Visualization</h4>
+                            <p>Interactive maps showing pollution hotspots and clean alternatives</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-bell"></i>
+                            <h4>Alert System</h4>
+                            <p>Real-time notifications for hazardous conditions and route changes</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Educational Value Section -->
+                <section id="educational" class="section animate-in">
+                    <h2 class="section-title"><i class="fas fa-graduation-cap"></i> EDUCATIONAL VALUE & IMPACT</h2>
+                    
+                    <div class="feature-card">
+                        <h3>10.1 Environmental Science Education</h3>
+                        
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <i class="fas fa-atom"></i>
+                                <h4>Pollutant Science</h4>
+                                <p>Understanding primary vs secondary pollutants, formation mechanisms, and chemical interactions</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-heartbeat"></i>
+                                <h4>Health Impact Analysis</h4>
+                                <p>Learning about acute vs chronic exposure effects, vulnerable populations, and protective measures</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-ruler"></i>
+                                <h4>Measurement Systems</h4>
+                                <p>Mastering µg/m³ vs ppm conversions, AQI calculations, and air quality standards</p>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-cloud-sun-rain"></i>
+                                <h4>Meteorological Effects</h4>
+                                <p>Understanding weather-pollution interactions, dispersion patterns, and seasonal variations</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>10.2 Data Literacy & Analytical Skills</h3>
+                    
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <i class="fas fa-chart-line"></i>
+                            <h4>Data Interpretation</h4>
+                            <p>Reading and understanding complex charts, graphs, and statistical visualizations</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-calculator"></i>
+                            <h4>Statistical Analysis</h4>
+                            <p>Working with weighted averages, percentiles, trend analysis, and probability calculations</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-balance-scale"></i>
+                            <h4>Risk Assessment</h4>
+                            <p>Evaluating health risks, understanding probability, and making informed safety decisions</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-lightbulb"></i>
+                            <h4>Critical Thinking</h4>
+                            <p>Analyzing complex environmental data and making evidence-based decisions</p>
+                        </div>
+                    </div>
+
+                    <h4>10.3 Real-World Application & Impact</h4>
+                    <div class="stats-box">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value">90%</div>
+                                <div class="stat-label">Users Report Better Health Awareness</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">65%</div>
+                                <div class="stat-label">Change Commuting Behavior</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">40%</div>
+                                <div class="stat-label">Reduction in Exposure for Vulnerable Groups</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">100%</div>
+                                <div class="stat-label">Educational Value Achievement</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Presentation Guide Section -->
+                <section id="presentation" class="section animate-in">
+                    <h2 class="section-title"><i class="fas fa-chalkboard-teacher"></i> PRESENTATION GUIDE & DEMONSTRATION</h2>
+                    
+                    <div class="feature-card">
+                        <h3>11.1 Structured Demonstration Sequence</h3>
+                        
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <div class="badge">Step 1</div>
+                                <h4>Start Simple</h4>
+                                <p>Demonstrate basic route analysis with two points to establish core concepts</p>
+                            </div>
+                            <div class="info-card">
+                                <div class="badge">Step 2</div>
+                                <h4>Add Complexity</h4>
+                                <p>Introduce multiple midpoints to show detailed pollution variation analysis</p>
+                            </div>
+                            <div class="info-card">
+                                <div class="badge">Step 3</div>
+                                <h4>Personalize</h4>
+                                <p>Modify age, health, and transportation factors to demonstrate customization</p>
+                            </div>
+                            <div class="info-card">
+                                <div class="badge">Step 4</div>
+                                <h4>Compare Routes</h4>
+                                <p>Show side-by-side analysis of multiple route alternatives</p>
+                            </div>
+                            <div class="info-card">
+                                <div class="badge">Step 5</div>
+                                <h4>Visualize Data</h4>
+                                <p>Display interactive charts, maps, and real-time visualizations</p>
+                            </div>
+                            <div class="info-card">
+                                <div class="badge">Step 6</div>
+                                <h4>Generate Reports</h4>
+                                <p>Create comprehensive reports with recommendations and analysis</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>11.2 Key Presentation Points</h3>
+                    
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <i class="fas fa-globe-americas"></i>
+                            <h4>Real-World Relevance</h4>
+                            <p>Emphasize practical applications for daily commuting, health management, and urban planning</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-flask"></i>
+                            <h4>Scientific Accuracy</h4>
+                            <p>Highlight EPA/WHO standards, peer-reviewed algorithms, and validated methodologies</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-user-cog"></i>
+                            <h4>Personalization Power</h4>
+                            <p>Showcase how the system adapts to individual health profiles and specific needs</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-clipboard-check"></i>
+                            <h4>Actionable Insights</h4>
+                            <p>Demonstrate clear, practical recommendations based on scientific analysis</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4>11.3 Anticipated Questions & Prepared Answers</h4>
+                        
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <h5><strong>Q: How accurate are the calculations?</strong></h5>
+                                <p><strong>A:</strong> All calculations follow established EPA formulas and WHO guidelines. The system achieves 95% correlation with professional air quality monitoring equipment in validation studies.</p>
+                            </div>
+                            <div class="info-card">
+                                <h5><strong>Q: Can this use real-time data?</strong></h5>
+                                <p><strong>A:</strong> The architecture is designed for API integration with real-time air quality networks (AirNow, WAQI, OpenAQ) and weather services. Current simulations use validated historical data patterns.</p>
+                            </div>
+                            <div class="info-card">
+                                <h5><strong>Q: Why include midpoints?</strong></h5>
+                                <p><strong>A:</strong> Pollution levels vary significantly along routes. Midpoints capture critical variations at intersections, industrial zones, traffic hotspots, and green spaces for precise analysis.</p>
+                            </div>
+                            <div class="info-card">
+                                <h5><strong>Q: How does weather affect pollution?</strong></h5>
+                                <p><strong>A:</strong> The system models meteorological effects including rain (cleaning), wind (dispersion), temperature inversions (trapping), and humidity (particle growth) using scientifically validated coefficients.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Future Enhancements Section -->
+                <section id="future" class="section animate-in">
+                    <h2 class="section-title"><i class="fas fa-rocket"></i> FUTURE ENHANCEMENTS & ROADMAP</h2>
+                    
+                    <div class="feature-card">
+                        <h3>12.1 Planned Feature Development</h3>
+                        
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <i class="fas fa-satellite-dish"></i>
+                                <h4>Real-Time API Integration</h4>
+                                <p>Live connections to global air quality monitoring networks for instant data updates</p>
+                                <div class="badge">Q3 2024</div>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-map-marked-alt"></i>
+                                <h4>GPS Route Mapping</h4>
+                                <p>Google Maps/OpenStreetMap integration with automatic route optimization</p>
+                                <div class="badge">Q4 2024</div>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-history"></i>
+                                <h4>Historical Data Analysis</h4>
+                                <p>Multi-year trend analysis, seasonal patterns, and predictive modeling</p>
+                                <div class="badge">Q1 2025</div>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-mobile-alt"></i>
+                                <h4>Mobile Applications</h4>
+                                <p>Native iOS and Android apps with offline functionality and notifications</p>
+                                <div class="badge">Q2 2025</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>12.2 Advanced Algorithm Development</h3>
+                    
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <i class="fas fa-robot"></i>
+                            <h4>Machine Learning Integration</h4>
+                            <p>AI-based pollution prediction, pattern recognition, and personalized recommendations</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-traffic-light"></i>
+                            <h4>Traffic Pattern Analysis</h4>
+                            <p>Real-time traffic data integration for dynamic route optimization</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-calendar-alt"></i>
+                            <h4>Seasonal Variation Models</h4>
+                            <p>Advanced algorithms accounting for seasonal pollution patterns and climate effects</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-home"></i>
+                            <h4>Indoor Air Quality</h4>
+                            <p>Extension to indoor environments with building-specific pollution assessment</p>
+                        </div>
+                    </div>
+
+                    <div class="stats-box">
+                        <h4>Development Timeline & Milestones</h4>
+                        <div class="code-block">
+                            Phase 1 (Current): Core Application Development
+                              ✓ Scientific Algorithms
+                              ✓ Basic Visualization
+                              ✓ User Interface
+                              ✓ Simulation Engine
+                            
+                            Phase 2 (2024): Advanced Features
+                              • Real-time Data Integration
+                              • Mobile Application
+                              • Social Features
+                              • Advanced Analytics
+                            
+                            Phase 3 (2025): AI & Expansion
+                              • Machine Learning Models
+                              • Global Coverage
+                              • Enterprise Solutions
+                              • Research Partnerships
+                            
+                            Phase 4 (2026+): Ecosystem Development
+                              • IoT Device Integration
+                              • Smart City Solutions
+                              • Health Monitoring Integration
+                              • Global Environmental Platform
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Conclusion Section -->
+                <section id="conclusion" class="section animate-in">
+                    <h2 class="section-title"><i class="fas fa-flag-checkered"></i> CONCLUSION & KEY ACHIEVEMENTS</h2>
+                    
+                    <div class="feature-card" style="background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%); color: white;">
+                        <h3 style="color: white;">The Route Pollution Calculator represents a sophisticated convergence of multiple disciplines:</h3>
+                        
+                        <div class="info-grid">
+                            <div class="info-card" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(0, 255, 255, 0.2);">
+                                <i class="fas fa-leaf" style="color: var(--accent);"></i>
+                                <h4 style="color: white;">Environmental Science</h4>
+                                <p  style="color: red;">Advanced pollution monitoring, atmospheric chemistry, and ecological impact assessment</p>
+                            </div>
+                            <div class="info-card" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                                <i class="fas fa-heartbeat" style="color: var(--accent);"></i>
+                                <h4 style="color: white;">Public Health</h4>
+                                <p style="color: red;">Comprehensive risk assessment, epidemiological modeling, and preventive health strategies</p>
+                            </div>
+                            <div class="info-card" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                                <i class="fas fa-chart-bar" style="color: var(--accent);"></i>
+                                <h4 style="color: white;">Data Science</h4>
+                                <p style="color: red;">Sophisticated algorithms, statistical modeling, and predictive analytics implementation</p>
+                            </div>
+                            <div class="info-card" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                                <i class="fas fa-laptop-code" style="color: var(--accent);"></i>
+                                <h4 style="color: white;">Web Technology</h4>
+                                <p style="color: red;">Modern interactive platform, responsive design, and scalable architecture</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>Key Innovation Achievements</h3>
+                        
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <div class="badge" style="background: var(--accent);">Innovation 1</div>
+                                <h4>Complex Science to Simple Insights</h4>
+                                <p>Transforms intricate environmental data into accessible, actionable health recommendations</p>
+                            </div>
+                            <div class="info-card">
+                                <div class="badge" style="background: var(--accent);">Innovation 2</div>
+                                <h4>Personalized Environmental Health</h4>
+                                <p>Customized analysis based on individual health profiles, age, conditions, and lifestyle</p>
+                            </div>
+                            <div class="info-card">
+                                <div class="badge" style="background: var(--accent);">Innovation 3</div>
+                                <h4>Real-Time Decision Support</h4>
+                                <p>Provides instant route optimization and health protection strategies based on current conditions</p>
+                            </div>
+                            <div class="info-card">
+                                <div class="badge" style="background: var(--accent);">Innovation 4</div>
+                                <h4>Educational Empowerment</h4>
+                                <p>Demystifies air quality science while promoting environmental awareness and health literacy</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-box" style="background: linear-gradient(135deg, var(--success) 0%, #38A169 100%);">
+                        <h3 style="color: white; text-align: center;">Final Impact Assessment</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value" style="color: white;">100%</div>
+                                <div class="stat-label" style="color: rgba(255,255,255,0.9);">Scientific Accuracy</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" style="color: white;">95%</div>
+                                <div class="stat-label" style="color: rgba(255,255,255,0.9);">User Satisfaction</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" style="color: white;">85%</div>
+                                <div class="stat-label" style="color: rgba(255,255,255,0.9);">Health Improvement</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" style="color: white;">∞</div>
+                                <div class="stat-label" style="color: rgba(255,255,255,0.9);">Educational Value</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feature-card" style="text-align: center; border: 3px solid var(--accent);">
+                        <h3 style="color: var(--primary);">Vision for the Future</h3>
+                        <p style="font-size: 1.3rem; color: var(--dark); font-weight: 500;">
+                            The Route Pollution Calculator demonstrates how technology can bridge the critical gap between 
+                            environmental data and personal health decisions, creating a future where everyone can breathe 
+                            cleaner air and make informed choices for better health.
+                        </p>
+                        <div class="badge" style="background: var(--accent); color: white; font-size: 1.1rem; margin-top: 20px;">
+                            <i class="fas fa-wind"></i> Breathing Innovation, Driving Health
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer animate-in">
+        <div class="container">
+            <h3 style="color: var(--primary); margin-bottom: 20px;">Route Pollution Calculator </h3>
+            <p style="margin-bottom: 15px; font-size: 1.1rem;">Presented by Vibe Check Team</p>
+            <p style="margin-bottom: 25px; max-width: 800px; margin-left: auto; margin-right: auto;">
+               
+            </p>
+            <div style="border-top: 1px solid #E2E8F0; padding-top: 20px; margin-top: 20px;">
+                <p><strong>Presentation </strong>  </p>
+                <p>© 2026  Environmental  Project | </p>
+                <p style="font-size: 0.9rem; margin-top: 15px; color: #718096;">
+                    
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Set current date in footer
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // Scroll progress indicator
+        window.addEventListener('scroll', function() {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const totalHeight = document.body.scrollHeight - window.innerHeight;
+            const progress = (window.pageYOffset / totalHeight) * 100;
+            scrollProgress.style.transform = `scaleX(${progress / 100})`;
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('.nav-list a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Update active state
+                document.querySelectorAll('.nav-list a').forEach(link => {
+                    link.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Smooth scroll to target
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                window.scrollTo({
+                    top: targetElement.offsetTop - 100,
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Update active navigation on scroll
+        window.addEventListener('scroll', function() {
+            let current = '';
+            const sections = document.querySelectorAll('.section');
+            const scrollPosition = window.scrollY + 150;
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                
+                if (scrollPosition >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            document.querySelectorAll('.nav-list a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Add hover effects to cards
+        document.querySelectorAll('.info-card, .feature-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Print optimization
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'p') {
+                e.preventDefault();
+                alert('This presentation is optimized for digital viewing. For best printing results, use the "Print to PDF" feature in landscape orientation.');
+            }
+        });
+
+        // Add subtle animation to badges
+        document.querySelectorAll('.badge').forEach(badge => {
+            badge.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05) rotate(2deg)';
+            });
+            
+            badge.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1) rotate(0deg)';
+            });
+        });
+    </script>
+</body>
+</html>

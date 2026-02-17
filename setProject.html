@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Pollution Calculator</title>
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <link rel="stylesheet" href="setProject.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="https://scontent.fktm17-1.fna.fbcdn.net/v/t39.30808-6/627679827_878561678388951_647308255291977804_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=127cfc&_nc_ohc=P8NpkQBtHRwQ7kNvwHv0kn0&_nc_oc=AdmNP4VhP7JLEwIGbSYR1--qr1DoyrFJDkzIWCUla2EmXdYRbTpXwIAqw3KouvyGG7Ybp88TPUNsoSFu0ANxbQGw&_nc_zt=23&_nc_ht=scontent.fktm17-1.fna&_nc_gid=B9s8wWGER42W8abUgnXAzw&oh=00_Afst6QVQ-BQdHNhBawhipxqoXxREmJRJoOa4g2nHLkmsdg&oe=698DE5FD">
+
+    <!-- Preload critical assets -->
+    <link rel="preload" href="setProject.css" as="style">
+</head>
+
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-container">
+            <div class="loader-animation">
+                <div class="loader-spinner"></div>
+                <div class="loader-orbits">
+                    <div class="orbit"></div>
+                    <div class="orbit"></div>
+                    <div class="orbit"></div>
+                </div>
+            </div>
+            <div class="loading-text">
+                <h2>Route Pollution Calculator</h2>
+                <div id="loadingMessage" class="loading-message"></div>
+                <div class="progress-track">
+                    <div class="progress-bar" id="loaderProgress"></div>
+                </div>
+            </div>
+        </div>
+        <div class="loading-background">
+            <div class="loading-particle"></div>
+            <div class="loading-particle"></div>
+            <div class="loading-particle"></div>
+            <div class="loading-particle"></div>
+            <div class="loading-particle"></div>
+        </div>
+    </div>
+
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="particle-container"></div>
+        <div class="gradient-overlay"></div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+        </div>
+    </div>
+
+
+    <!-- Fixed Header with Title -->
+    <div class="fixed-header" id="fixedHeader">
+        <header class="project-header">
+            <div class="header-content">
+                <div class="project-title" data-aos="fade-down" data-aos-duration="800">
+                    <div class="title-wrapper">
+                            <div>
+                                <span class="title-word">Route&nbsp; Pollution
+                                    &nbsp;Calculator <br> <span class="title-motto">"If you can control it, you can measure it"</span>
+                                </span>
+
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+
+    </div>
+
+    <!-- Fixed Sidebar Navigation -->
+    <div class="sidebar-nav" id="sidebarNav">
+        <div class="sidebar-header">
+            <div class="nav-brand">
+                <img title="Vibe Check logo" class="logo-vc"
+                    src="https://scontent.fktm17-1.fna.fbcdn.net/v/t39.30808-6/627679827_878561678388951_647308255291977804_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=127cfc&_nc_ohc=P8NpkQBtHRwQ7kNvwHv0kn0&_nc_oc=AdmNP4VhP7JLEwIGbSYR1--qr1DoyrFJDkzIWCUla2EmXdYRbTpXwIAqw3KouvyGG7Ybp88TPUNsoSFu0ANxbQGw&_nc_zt=23&_nc_ht=scontent.fktm17-1.fna&_nc_gid=B9s8wWGER42W8abUgnXAzw&oh=00_Afst6QVQ-BQdHNhBawhipxqoXxREmJRJoOa4g2nHLkmsdg&oe=698DE5FD"
+                    alt="logo">
+                <span class="vc">VIBE <br> CHECK</span>
+            </div>
+
+        </div>
+        <nav class="sidebar-menu">
+            <ul class="nav-links">
+                <li title="Conigure routes"><a href="#configuration" class="nav-link active"><i class="fas fa-sliders-h"></i>
+                        <span >Configure</span></a></li>
+                <li title="Analyze AQI"><a href="#analysis" class="nav-link"><i class="fas fa-chart-pie"></i> <span>Analysis</span></a></li>
+                <li title="Visualise Data"><a href="#visualization" class="nav-link"><i class="fas fa-chart-bar"></i>
+                        <span>Visualization</span></a></li>
+                <li title="Show Insights"><a href="#insights" class="nav-link"><i class="fas fa-lightbulb"></i> <span>Insights</span></a></li>
+            </ul>
+            <div class="sidebar-actions">
+                <br>
+
+
+
+                <button title="Change Theme" class="nav-btn" id="themeToggleBtn">
+                    <i class="fas fa-moon"></i>
+                    <span>Theme</span>
+                </button>
+                <button title="I Need Help" class="nav-btn" id="helpBtn">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Help</span>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+
+    <!-- Main Content Container -->
+    <main class="project-container">
+        <!-- Introduction Section -->
+        <section class="introduction-section" data-aos="fade-up" data-aos-duration="600">
+            <div class="intro-card">
+                <div class="intro-header">
+                    <div class="intro-icon pulse-icon">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <h2>Route Pollution Calculator</h2>
+                </div>
+                <p class="intro-text">
+                    Want to know how clean the air is along your route?<br>
+                    This app measures multiple pollutants at different points.
+                    It calculates your exposure so you can see where the air is safest.
+                    Use the results to plan healthier paths and make better travel decisions.
+                </p>
+                <div class="intro-features">
+                    <div class="feature-tag">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Health Focused</span>
+                    </div>
+                    <div class="feature-tag">
+                        <i class="fas fa-bolt"></i>
+                        <span>Real-time Analysis</span>
+                    </div>
+                    <div class="feature-tag">
+                        <i class="fas fa-crosshairs"></i>
+                        <span>Precise Measurement</span>
+                    </div>
+                    <div class="feature-tag">
+                        <i class="fas fa-route"></i>
+                        <span>Multi-point Analysis</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Route Configuration Section -->
+        <section class="route-config-section" id="configuration" data-aos="fade-up" data-aos-duration="600"
+            data-aos-delay="100">
+            <div class="section-header">
+                <div class="header-decoration">
+                    <div class="decor-line"></div>
+                    <i class="fas fa-sliders-h header-icon pulse-icon"></i>
+                    <div class="decor-line"></div>
+                </div>
+                <h2>Configure Your Route</h2>
+                <p class="section-subtitle">Set travel path and pick the points to track air quality along the route.
+                </p>
+            </div>
+
+            <div class="config-form">
+                <!-- Basic Route Info -->
+                <div class="form-section" data-aos="zoom-in" data-aos-duration="500">
+                    <div class="form-section-header">
+                        <h3><i class="fas fa-map"></i> Route Details</h3>
+                        <div class="section-number">01</div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="routeName" class="form-label">
+                                <span class="label-text">Route Name</span>
+                                <i class="fas fa-pen"></i>
+                            </label>
+                            <input type="text" id="routeName" class="form-input" placeholder="Enter Route Name:"
+                                required>
+                            <div class="input-helper">Give descriptive name to your route</div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="startPoint" class="form-label">
+                                    <i class="fas fa-location-arrow"></i>
+                                    <span class="label-text">Start Point</span>
+                                </label>
+                                <div class="input-with-suggestions">
+                                    <input type="text" id="startPoint" class="form-input" placeholder="Starting point: "
+                                        required>
+                                    <div class="suggestions-dropdown" id="startSuggestions"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="endPoint" class="form-label">
+                                    <i class="fas fa-flag"></i>
+                                    <span class="label-text">Destination</span>
+                                </label>
+                                <div class="input-with-suggestions">
+                                    <input type="text" id="endPoint" class="form-input" placeholder="Destination : "
+                                        required>
+                                    <div class="suggestions-dropdown" id="endSuggestions"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="travelTime" class="form-label">
+                                    <i class="fas fa-clock"></i>
+                                    <span class="label-text">Travel Time (min)</span>
+                                </label>
+                                <div class="range-input-container">
+                                    <input type="range" id="travelTimeRange" min="1" max="300" value="25"
+                                        class="range-input">
+                                    <input type="number" id="travelTime" class="form-input range-number" value="25"
+                                        min="1" max="300" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="distance" class="form-label">
+                                    <i class="fas fa-road"></i>
+                                    <span class="label-text">Distance (km)</span>
+                                </label>
+                                <div class="range-input-container">
+                                    <input type="range" id="distanceRange" min="0.1" max="100" step="0.1" value="8.5"
+                                        class="range-input">
+                                    <input type="number" id="distance" class="form-input range-number" value="8.5"
+                                        min="0.1" max="100" step="0.1" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pollution Measurement Points -->
+                <div class="form-section" data-aos="zoom-in" data-aos-duration="500" data-aos-delay="100">
+                    <div class="form-section-header">
+                        <h3><i class="fas fa-chart-line"></i> Pollution Measurement</h3>
+                        <div class="section-number">02</div>
+                    </div>
+
+                    <p class="section-description">
+                        Add points along your route to measure pollution. <br>
+
+                    </p>
+
+                    <!-- Starting Point -->
+                    <div class="measurement-point start-point" draggable="true" data-point="start">
+                        <div class="point-header">
+                            <div class="point-marker">
+                                <div class="marker-icon">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                                <div class="marker-label">Start</div>
+                            </div>
+                            <div class="point-details">
+                                <h4>Starting Location</h4>
+                                <p id="startPointDisplay" class="location-display">Enter start location above</p>
+                            </div>
+                            <span class="point-tag primary-tag">Origin</span>
+                            <div class="point-drag">
+                                <i class="fas fa-grip-vertical"></i>
+                            </div>
+                        </div>
+
+                        <div class="pollution-controls" id="startPollutionControls">
+                            <!-- Pollution meters are inserted by java-script -->
+                        </div>
+                    </div>
+
+                    <!-- Midpoints Section -->
+                    <div class="midpoints-section">
+                        <div class="midpoints-header">
+                            <button type="button" class="add-point-btn" id="addMidpointBtn">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Measurement Point</span>
+                                <div class="btn-shine"></div>
+                            </button>
+                            <div class="midpoints-counter">
+                                <i class="fas fa-layer-group"></i>
+                                <span id="midpointCount">0</span> points added
+                            </div>
+                        </div>
+                        <div class="midpoints-container" id="midpointsContainer">
+                            <div class="midpoints-guide" id="midpointsGuide">
+                                <i class="fas fa-info-circle"></i>
+                                <p>Click "Add Measurement Point" to insert intermediate pollution checkpoints</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ending Point -->
+                    <div class="measurement-point end-point" draggable="true" data-point="end">
+                        <div class="point-header">
+                            <div class="point-marker">
+                                <div class="marker-icon">
+                                    <i class="fas fa-stop"></i>
+                                </div>
+                                <div class="marker-label">End</div>
+                            </div>
+                            <div class="point-details">
+                                <h4>Destination Point</h4>
+                                <p id="endPointDisplay" class="location-display">Enter destination above</p>
+                            </div>
+                            <span class="point-tag accent-tag">Destination</span>
+                            <div class="point-drag">
+                                <i class="fas fa-grip-vertical"></i>
+                            </div>
+                        </div>
+
+                        <div class="pollution-controls" id="endPollutionControls">
+                            <!--  pollution meters are inserted here by Java-Script -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Travel & Health Parameters -->
+                <div class="form-section" data-aos="zoom-in" data-aos-duration="500" data-aos-delay="200">
+                    <div class="form-section-header">
+                        <h3><i class="fas fa-user-circle"></i> Travel Data</h3>
+                        <div class="section-number">03</div>
+                    </div>
+
+                    <div class="profile-grid">
+                        <div class="profile-card">
+                            <div class="profile-icon">
+                                <i class="fas fa-bus"></i>
+                            </div>
+                            <div class="profile-content">
+                                <label for="transportMode" class="profile-label">Transportation Mode</label>
+                                <select id="transportMode" class="profile-select">
+                                    <option value="walking">🚶 Walking</option>
+                                    <option value="cycling">🚴 Cycling</option>
+                                    <option value="car_window" selected>🚗 Car (Windows Opened)</option>
+                                    <option value="car_ac">🚗 Car (AC)</option>
+                                    <option value="bus">🚌 Bus</option>
+                                    <option value="motorcycle">🏍️ Motorcycle</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="profile-card">
+                            <div class="profile-icon">
+                                <i class="fas fa-user-friends"></i>
+                            </div>
+                            <div class="profile-content">
+                                <label for="ageGroup" class="profile-label">Age Group</label>
+                                <select id="ageGroup" class="profile-select">
+                                    <option value="child">👶 Child (0-12)</option>
+                                    <option value="teen" selected>🧒 Teen (13-19)</option>
+                                    <option value="adult">👱 Adult (20-64)</option>
+                                    <option value="senior">👴 Senior (65+)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="profile-card health-profile-card">
+                            <div class="profile-icon">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                            <div class="profile-content">
+                                <div class="form-group">
+                                    <label for="healthStatus" class="form-label">
+                                        <i class="fas fa-heartbeat"></i>
+                                        <span class="label-text">Health Condition</span>
+                                    </label>
+                                    <div class="enhanced-select-container">
+                                        <select id="healthStatus" class="enhanced-select">
+                                            <!-- Options are populated by JavaScript -->
+                                        </select>
+                                        <div class="select-arrow">
+                                            <i class="fas fa-chevron-down"></i>
+                                        </div>
+                                    </div>
+                                    <div class="health-condition-description" id="healthConditionDescription">
+                                        Select a health condition to see detailed impact
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Weather Integration -->
+                    <div class="weather-integration">
+                        <div class="weather-selector">
+                            <div class="weather-header">
+                                <i class="fas fa-cloud-sun"></i>
+                                <h4>Weather Conditions</h4>
+                            </div>
+                            <div class="weather-select-container">
+                                <div class="weather-presets" id="weatherPresets">
+                                    <!-- Weather options are populated by JavaScript -->
+                                </div>
+                                <div class="weather-info-display" id="weatherInfo">
+                                    <div class="weather-loading">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <span>Select weather condition</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Control Buttons -->
+                <div class="form-actions" data-aos="fade-up" data-aos-duration="500" data-aos-delay="300">
+                    <div class="action-buttons">
+                        <button type="button" class="action-btn primary-action" id="addRouteBtn">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Add Route</span>
+                            <div class="action-glow"></div>
+                        </button>
+                        <button type="button" class="action-btn tertiary-action" id="resetBtn">
+                            <i class="fas fa-redo"></i>
+                            <span>Reset Routes</span>
+                        </button>
+                        <button type="button" class="action-btn accent-action" id="quickAnalyzeBtn">
+                            <i class="fas fa-bolt"></i>
+                            <span>Quick Analysis</span>
+                        </button>
+                    </div>
+                    <p class="action-hint">
+                        <i class="fas fa-lightbulb"></i>
+                        Tip: Add multiple routes for comparative analysis.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analysis Results Section (Initially Hidden) -->
+        <section class="analysis-section" id="analysis" data-aos="fade-up" data-aos-duration="600" data-aos-delay="200"
+            style="display: none;">
+            <div class="section-header">
+                <div class="header-decoration">
+                    <div class="decor-line"></div>
+                    <i class="fas fa-chart-pie header-icon pulse-icon"></i>
+                    <div class="decor-line"></div>
+                </div>
+                <h2>Analysis Results</h2>
+                <p class="section-subtitle">Detailed pollution exposure and health impact analysis</p>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card" data-aos="flip-left" data-aos-duration="500">
+                    <div class="stat-visual">
+                        <div class="stat-circle">
+                            <i class="fas fa-route"></i>
+                        </div>
+                        <div class="stat-wave"></div>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-value" id="routesCount">0</h3>
+                        <p class="stat-label">Routes Analyzed</p>
+                    </div>
+                </div>
+
+                <div class="stat-card" data-aos="flip-left" data-aos-duration="500" data-aos-delay="50">
+                    <div class="stat-visual">
+                        <div class="stat-circle">
+                            <i class="fas fa-wind"></i>
+                        </div>
+                        <div class="stat-wave"></div>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-value" id="avgPM25">0</h3>
+                        <p class="stat-label">Avg PM2.5 (µg/m³)</p>
+                    </div>
+                </div>
+
+                <div class="stat-card" data-aos="flip-left" data-aos-duration="500" data-aos-delay="100">
+                    <div class="stat-visual">
+                        <div class="stat-circle">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="stat-wave"></div>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-value" id="safestRoute">--</h3>
+                        <p class="stat-label">Safest Route</p>
+                    </div>
+                </div>
+
+                <div class="stat-card" data-aos="flip-left" data-aos-duration="500" data-aos-delay="150">
+                    <div class="stat-visual">
+                        <div class="stat-circle">
+                            <i class="fas fa-chart-network"></i>
+                        </div>
+                        <div class="stat-wave"></div>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-value" id="totalPoints">0</h3>
+                        <p class="stat-label">Data Points</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Health Risk Assessment -->
+            <div class="risk-assessment" data-aos="fade-up" data-aos-duration="600">
+                <div class="assessment-header">
+                    <h3><i class="fas fa-heart"></i> Health Risk Assessment</h3>
+                    <div class="risk-scale">
+                        <span class="scale-item safe">Safe</span>
+                        <span class="scale-item moderate">Moderate</span>
+                        <span class="scale-item unhealthy">Unhealthy</span>
+                        <span class="scale-item hazardous">Hazardous</span>
+                    </div>
+                </div>
+
+                <div class="risk-meter">
+                    <div class="meter-track">
+                        <div class="meter-progress" id="riskMeter"></div>
+                        <div class="meter-indicator" id="riskIndicator">
+                            <div class="indicator-arrow"></div>
+                            <div class="indicator-value">--</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health Risk Grid -->
+                <div class="health-risk-grid">
+                    <div class="health-risk-cards" id="healthRiskCards">
+                        <!-- Cards are populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Display -->
+            <div class="results-display" id="routesContainer" data-aos="fade-up" data-aos-duration="600"
+                data-aos-delay="100">
+                <div class="empty-state">
+                    <div class="empty-visual">
+                        <i class="fas fa-chart-line"></i>
+                        <div class="empty-wave"></div>
+                    </div>
+                    <div class="empty-content">
+                        <h3>Ready for Analysis</h3>
+                        <p>Configure your routes and click "Add Route" to see detailed pollution exposure results</p>
+                        <button class="guide-btn" id="quickStartBtn">
+                            <i class="fas fa-play-circle"></i>
+                            Quick Start Guide
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analysis Control Button -->
+            <div class="analysis-controls" data-aos="fade-up" data-aos-duration="500" data-aos-delay="200">
+                <button type="button" class="action-btn secondary-action" id="analyzeBtn">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analyze Routes</span>
+                    <div class="action-glow"></div>
+                </button>
+            </div>
+
+            <!-- Export Controls -->
+            <div class="export-controls" data-aos="fade-up" data-aos-duration="500" data-aos-delay="200">
+                <button class="export-btn print-btn" id="printReportBtn">
+                    <i title="Save report as pdf" class="fas fa-print"></i>
+                    <span>Print Report</span>
+                </button>
+                <button class="export-btn" id="exportDataBtn">
+                    <i title="JSON file" class="fas fa-file-export"></i>
+                    <span>Export Data</span>
+                </button>
+                <button class="export-btn" id="shareResultsBtn">
+                    <i title="Share" class="fas fa-share-alt"></i>
+                    <span>Share Results</span>
+                </button>
+                <button class="export-btn" id="saveProjectBtn">
+                    <i class="fas fa-save"></i>
+                    <span>Save Project</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Visualization Section (Initially Hidden) -->
+        <section class="visualization-section" id="visualization" data-aos="fade-up" data-aos-duration="600"
+            data-aos-delay="300" style="display: none;">
+            <div class="section-header">
+                <div class="header-decoration">
+                    <div class="decor-line"></div>
+                    <i class="fas fa-chart-bar header-icon pulse-icon"></i>
+                    <div class="decor-line"></div>
+                </div>
+                <h2>Data Visualization</h2>
+                <p class="section-subtitle">Interactive charts showing pollution trends and comparisons</p>
+            </div>
+
+            <div class="visualization-container">
+                <div class="chart-wrapper">
+                    <div class="chart-header">
+                        <h4>Route Pollution Comparison</h4>
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <span class="legend-dot pm25-dot"></span>
+                                <span>PM2.5 Exposure</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot aqi-dot"></span>
+                                <span>Air Quality Index</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot health-dot"></span>
+                                <span>Health Score</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-area">
+                        <canvas id="exposureChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-controls">
+                    <div class="chart-types">
+                        <button class="chart-type-btn active" data-chart="bar">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Bar Chart</span>
+                        </button>
+                    </div>
+
+                    <div class="chart-actions">
+                        <button class="chart-action-btn" id="exportChartBtn">
+                            <i class="fas fa-download"></i>
+                            Download Chart
+                        </button>
+                        <button class="chart-action-btn" id="animateChartBtn">
+                            <i class="fas fa-play"></i>
+                            Animate
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Insights Section -->
+        <section class="insights-section" id="insights" data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">
+            <div class="section-header">
+                <div class="header-decoration">
+                    <div class="decor-line"></div>
+                    <i class="fas fa-lightbulb header-icon pulse-icon"></i>
+                    <div class="decor-line"></div>
+                </div>
+                <h2>Key Insights</h2>
+                <p class="section-subtitle">Important findings from pollution analysis</p>
+            </div>
+
+            <div class="insights-grid">
+                <div class="insight-card" data-aos="flip-up" data-aos-duration="500">
+                    <div class="insight-icon">
+                        <div class="icon-circle">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                    </div>
+                    <div class="insight-content">
+                        <h4>Measurement Precision</h4>
+                        <p>Adding intermediate measurement points increases analysis accuracy by 40% compared to
+                            endpoint-only measurements.</p>
+                    </div>
+                    <div class="insight-footer">
+                        <span class="insight-tag">Accuracy</span>
+                    </div>
+                </div>
+
+                <div class="insight-card" data-aos="flip-up" data-aos-duration="500" data-aos-delay="50">
+                    <div class="insight-icon">
+                        <div class="icon-circle">
+                            <i class="fas fa-car"></i>
+                        </div>
+                    </div>
+                    <div class="insight-content">
+                        <h4>Vehicle Protection</h4>
+                        <p>Using AC with recirculation mode reduces in-vehicle pollution exposure by 30% compared to
+                            open windows.</p>
+                    </div>
+                    <div class="insight-footer">
+                        <span class="insight-tag">Protection</span>
+                    </div>
+                </div>
+
+                <div class="insight-card" data-aos="flip-up" data-aos-duration="500" data-aos-delay="100">
+                    <div class="insight-icon">
+                        <div class="icon-circle">
+                            <i class="fas fa-sun"></i>
+                        </div>
+                    </div>
+                    <div class="insight-content">
+                        <h4>Time Variations</h4>
+                        <p>Morning routes typically show 20% higher pollution levels compared to afternoon routes in
+                            urban environments.</p>
+                    </div>
+                    <div class="insight-footer">
+                        <span class="insight-tag">Timing</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Credits Section -->
+        <section class="credits-section" data-aos="fade-up" data-aos-duration="600">
+            <div class="section-header">
+                <h2>Project Information</h2>
+                <p class="section-subtitle">Project for Environmental Science and Public Health</p>
+            </div>
+
+            <div class="credits-content">
+                <div class="credit-card">
+                    <i class="fas fa-leaf"></i>
+                    <h4>Environmental Project</h4>
+                    <p>For environmental science</p>
+                </div>
+                <div class="credit-card">
+                    <i class="fas fa-flask"></i>
+                    <h4>Scientific Basis</h4>
+                    <p>Based on EPA air quality standards and WHO guidelines</p>
+                </div>
+                <div class="credit-card">
+                    <img class="logo-vc"
+                        src="https://scontent.fktm17-1.fna.fbcdn.net/v/t39.30808-6/627679827_878561678388951_647308255291977804_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=127cfc&_nc_ohc=P8NpkQBtHRwQ7kNvwHv0kn0&_nc_oc=AdmNP4VhP7JLEwIGbSYR1--qr1DoyrFJDkzIWCUla2EmXdYRbTpXwIAqw3KouvyGG7Ybp88TPUNsoSFu0ANxbQGw&_nc_zt=23&_nc_ht=scontent.fktm17-1.fna&_nc_gid=B9s8wWGER42W8abUgnXAzw&oh=00_Afst6QVQ-BQdHNhBawhipxqoXxREmJRJoOa4g2nHLkmsdg&oe=698DE5FD"
+                        alt="logo">
+                    <h4>Team Vibe Check</h4>
+                    <p>Developed By Students Of Grade XI</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!--Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <i class="fas fa-route pulse-icon"></i>
+                </div>
+                <div class="footer-info">
+                    <h3>Route Pollution Calculator</h3>
+                    <p class="footer-motto">"Intelligent route planning for healthier living"</p>
+                    <p class="footer-team">By Team Vibe Check</p>
+                </div>
+            </div>
+
+            <div class="footer-actions">
+                <button title="Go to the top" class="footer-btn" id="backToTopBtn">
+                    <i  class="fas fa-arrow-up"></i>
+                    <span>Back to Top</span>
+                </button>
+                <button title="Delete all data" class="footer-btn" id="clearAllBtn">
+                    <i  class="fas fa-trash-alt"></i>
+                    <span>Clear All Data</span>
+                </button>
+                <button title="❌ Feedback ✅ E-Mail " class="footer-btn" id="feedbackBtn">
+                    <i  class="fas fa-comment-alt"></i>
+                    <span>Feedback</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p class="copyright">Route Pollution Calculator <br>© 2026 &nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Vibe check
+            </p>
+            <div class="footer-links">
+                <a href="mailto:025neb901@sxc.edu.np">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Quick Start Modal -->
+    <div class="modal-overlay" id="guideModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-graduation-cap"></i> Quick Start Guide</h3>
+                <button class="modal-close" id="closeGuideBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="guide-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Enter Route Details</h4>
+                        <p>Fill the route name, start point, destination, time, and distance</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Add Measurement Points</h4>
+                        <p>Click "Add Measurement Point" to include intermediate pollution checkpoints</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Set Pollution Levels</h4>
+                        <p>Adjust sliders or fill value for PM2.5, PM10, NO₂, and O₃ at each point</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Configure Profile</h4>
+                        <p>Select transportation mode, age group, and health profile</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h4>Analyze Routes</h4>
+                        <p>Click "Add Route" then "Analyze Routes" to see results</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn" id="startTutorialBtn">
+                    <i class="fas fa-play"></i>
+                    Start Tutorial
+                </button>
+                <button class="modal-btn secondary" id="skipTutorialBtn">
+                    <i class="fas fa-forward"></i>
+                    Skip Tutorial
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Print Report Modal -->
+    <div class="print-modal" id="printModal">
+        <div class="print-content">
+            <div class="print-header">
+                <h3><i class="fas fa-print"></i> Print Report</h3>
+                <p>Select what to include in the printed report</p>
+            </div>
+            <div class="print-options">
+                <div class="print-option">
+                    <input type="checkbox" id="printAnalysis" checked>
+                    <label for="printAnalysis">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analysis Results</span>
+                    </label>
+                </div>
+                <div class="print-option">
+                    <input type="checkbox" id="printCharts">
+                    <label for="printCharts">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Charts & Graphs</span>
+                    </label>
+                </div>
+                <div class="print-option">
+                    <input type="checkbox" id="printData">
+                    <label for="printData">
+                        <i class="fas fa-table"></i>
+                        <span>Route Data</span>
+                    </label>
+                </div>
+                <div class="print-option">
+                    <input type="checkbox" id="printSummary">
+                    <label for="printSummary">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Executive Summary</span>
+                    </label>
+                </div>
+            </div>
+            <div class="print-actions">
+                <button class="print-btn secondary" id="cancelPrintBtn">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+                <button class="print-btn primary" id="confirmPrintBtn">
+                    <i class="fas fa-print"></i>
+                    Print Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="modal-overlay" id="feedbackModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-comment-alt"></i> Feedback</h3>
+                <button class="modal-close" id="closeFeedbackBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Your Feedback</label>
+                    <textarea id="feedbackText" class="form-input" rows="4"
+                        placeholder="Share your thoughts, suggestions, or report issues..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Rating</label>
+                    <div class="rating-stars">
+                        <i class="fas fa-star" data-rating="1"></i>
+                        <i class="fas fa-star" data-rating="2"></i>
+                        <i class="fas fa-star" data-rating="3"></i>
+                        <i class="fas fa-star" data-rating="4"></i>
+                        <i class="fas fa-star" data-rating="5"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn" id="submitFeedbackBtn">
+                    <i class="fas fa-paper-plane"></i>
+                    Submit Feedback
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fullscreen Chart Modal -->
+    <div class="fullscreen-modal" id="fullscreenChartModal">
+        <div class="fullscreen-content">
+            <div class="fullscreen-header">
+                <h3>Pollution Analysis Chart</h3>
+                <button class="modal-close" id="closeFullscreenBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="fullscreen-body">
+                <canvas id="fullscreenChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button title="Go to the top" class="back-to-top" id="backToTopBtnMobile">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    <!-- Notifications Container -->
+    <div class="notifications-wrapper" id="notificationsWrapper"></div>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="setProject.js"></script>
+</body>
+
+</html>
